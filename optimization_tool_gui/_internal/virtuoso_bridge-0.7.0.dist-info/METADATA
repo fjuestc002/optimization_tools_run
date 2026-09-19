@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: virtuoso-bridge
+Version: 0.7.0
+Summary: Lightweight Python bridge for Cadence Virtuoso SKILL execution and Spectre simulation
+Requires-Python: >=3.9
+License-File: LICENSE
+Requires-Dist: python-dotenv>=1.0
+Requires-Dist: pydantic>=2.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: markdownify>=0.14
+Provides-Extra: visio
+Requires-Dist: pywin32; sys_platform == "win32" and extra == "visio"
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Dynamic: license-file

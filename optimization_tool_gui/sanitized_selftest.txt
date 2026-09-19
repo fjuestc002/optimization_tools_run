@@ -1,0 +1,27 @@
+PASS metadata:pymoo: v0.6.2
+PASS metadata:moocore: v0.3.2
+PASS metadata:numpy: v2.5.2
+PASS metadata:scipy: v1.18.0
+PASS metadata:matplotlib: v3.11.1
+PASS metadata:pandas: v3.0.5
+PASS metadata:virtuoso_bridge: v0.7.0
+PASS metadata:optimization_tool: v0.1.1
+PASS metadata:scikit-learn: v1.9.0
+PASS metadata:narwhals: v2.25.0
+PASS metadata:PySide6: v6.11.2
+PASS metadata:urllib3: v2.7.0
+PASS metadata:requests: v2.34.2
+PASS metadata:joblib: v1.5.3
+PASS metadata:setuptools: v84.0.0
+PASS import sklearn: 1.9.0
+PASS pymoo.algorithms(construct): 9 algorithms: ga,de,pso,cmaes,nsga2,spea2,nsga3,moead,ctaea
+PASS pymoo.nds: fronts=2
+PASS ai.evaluator.constants: cold_start=20,threshold=0.9
+PASS engine.loop: <module 'optimization_tool.engine.loop' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\engine\\loop.cp314-win_amd64.pyd'>
+PASS optimization(VirtuosoProblem): <module 'optimization_tool.optimization' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\optimization.cp314-win_amd64.pyd'>
+PASS virtuoso_bridge.client: <module 'virtuoso_bridge' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\virtuoso_bridge\\__init__.cp314-win_amd64.pyd'>
+PASS gui.app: <module 'optimization_tool.gui.app' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\gui\\app.cp314-win_amd64.pyd'>
+PASS matplotlib.agg: Agg ok
+PASS ai.surrogates(construct+fit+predict): gradient_boosting,local_gp,random_forest,remote_api(ctor)
+PASS gui.icon: C:\Users\DELL\run_build\dist_run\optimization_tool_gui\_internal\icon.ico (96076 B) [QIcon ok]
+ALL PASS (frozen=True)

@@ -1,0 +1,14 @@
+../../Scripts/markdownify.exe,sha256=CYhEYqjARGyuo3uxqcPLhvXi__Ay6l_lrSk0TPEFaQI,108363
+markdownify-1.2.3.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+markdownify-1.2.3.dist-info/LICENSE,sha256=-ui0LbFC2r8DsMXElYMaXRG5ZJ6tDPC9SrT1IpSyY74,1083
+markdownify-1.2.3.dist-info/METADATA,sha256=S0V7mjs8bnyHJ3pRV_n5lYi2z4nuFq4gyKAZxqZvbis,9922
+markdownify-1.2.3.dist-info/RECORD,,
+markdownify-1.2.3.dist-info/WHEEL,sha256=BNRMDyzLkkcmlv0J8ppDQkk2VED33SesJDynr9ED1gc,91
+markdownify-1.2.3.dist-info/entry_points.txt,sha256=aw6z0eP-JNgDUt_moftyC8h2Eq6ZozXidftz4vPLL6g,54
+markdownify-1.2.3.dist-info/top_level.txt,sha256=ha49KLoQ4fPt5iDTnA8CAB5DHiASLB6D8buPqzzLqgo,12
+markdownify/__init__.py,sha256=KBvKDiq4SiGCU3b4LQfZVFX0GmsDkr-VlQvymqxUC0A,30403
+markdownify/__init__.pyi,sha256=rC2upAdBTRwJ-oAxvDtVds2P3VHEhkEVGlrvMLWPjuU,2149
+markdownify/__pycache__/__init__.cpython-314.pyc,,
+markdownify/__pycache__/main.cpython-314.pyc,,
+markdownify/main.py,sha256=0-wRXd65Dr3nwKezcPMMTb_upP6aoMw38mc0CIZTlXk,4530
+markdownify/py.typed,sha256=AbpHGcgLb-kRsJGnwFEktk7uzpZOCcBY74-YBdrKVGs,1

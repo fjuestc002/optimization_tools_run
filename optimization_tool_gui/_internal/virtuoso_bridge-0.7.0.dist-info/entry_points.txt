@@ -1,0 +1,2 @@
+[console_scripts]
+virtuoso-bridge = virtuoso_bridge.cli:main

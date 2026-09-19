@@ -1,0 +1,2 @@
+[console_scripts]
+optimization-tool = optimization_tool.main:main

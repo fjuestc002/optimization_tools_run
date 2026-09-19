@@ -1,0 +1,2 @@
+# keep every shipped byte as-is (no EOL conversion)
+* -text

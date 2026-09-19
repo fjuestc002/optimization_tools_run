@@ -1,0 +1,5 @@
+# Runtime artifacts users may create next to the bundles
+.env
+__pycache__/
+*.log
+_trash/

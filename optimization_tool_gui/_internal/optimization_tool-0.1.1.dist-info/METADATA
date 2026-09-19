@@ -1,0 +1,292 @@
+Metadata-Version: 2.4
+Name: optimization-tool
+Version: 0.1.1
+Summary: Optimization tooling that depends on local virtuoso-bridge-lite-main.
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: pymoo
+Requires-Dist: scikit-learn
+Requires-Dist: scipy
+Requires-Dist: joblib
+Requires-Dist: requests
+Requires-Dist: scikit-optimize
+Requires-Dist: virtuoso-bridge @ file:///C:/Users/DELL/virtuoso-bridge-lite-main
+Provides-Extra: gui
+Requires-Dist: PySide6; extra == "gui"
+Requires-Dist: matplotlib; extra == "gui"
+Provides-Extra: plot
+Requires-Dist: matplotlib; extra == "plot"
+Dynamic: license-file
+
+# optimization-tool
+
+A Python optimization tool that connects pymoo evolutionary algorithms with
+Cadence Virtuoso Maestro for analog IC design optimization, with **AI surrogate assistance** for accelerated convergence.
+
+## Architecture
+![alt text][def]
+```
+┌──────────────────────────────────────┐
+│  optimization_tool (Python)          │
+│  ┌────────────────────────────────┐  │
+│  │  pymoo / Bayesian Algorithm    │  │
+│  │  (GA/NSGA2/DE/PSO/CMAES/…)     │  │
+│  └────────────┬───────────────────┘  │
+│               │                      │
+│  ┌────────────▼───────────────────┐  │
+│  │  AI Surrogate ( GP/RF/GBRT)    │  │                 
+│  │  └─ Cold Start → Predict →     │  │
+│  │    → Verify → Learn (inc.)     │  │
+│  └────────────┬───────────────────┘  │
+│               │ SKILL commands       │
+│  ┌────────────▼───────────────────┐  │
+│  │  virtuoso-bridge (SSH tunnel)  │  │
+│  └────────────┬───────────────────┘  │
+└───────────────┼──────────────────────┘
+                │ SSH
+┌───────────────▼──────────────────────┐
+│  Linux (Virtuoso + Maestro)          │
+│  └─ Spectre simulation               │
+└──────────────────────────────────────┘
+```
+
+## Prerequisites
+
+- Python 3.9+
+- `virtuoso-bridge` installed and configured (SSH tunnel to Virtuoso)
+- Cadence Virtuoso with Maestro
+- pymoo and its dependencies
+
+## Dependencies
+
+All runtime dependencies are declared in `pyproject.toml` and installed
+automatically by `pip install -e .`. They are grouped below by purpose.
+
+### Core (always required)
+| Package | Purpose |
+|---------|---------|
+| `numpy` | Vector/matrix math, design variables & objectives |
+| `pandas` | Reading/writing CSV history, specs, and model files |
+| `pymoo` | Evolutionary / multi-objective optimizers (NSGA2, DE, PSO, CMAES…) |
+| `scikit-learn` | Gaussian-process surrogate (`GaussianProcessRegressor`) and RF/GBRT models |
+| `scipy` | Statistical helpers used by some surrogates (e.g. `median_abs_deviation`) |
+| `joblib` | Serializing the **trained GP model** (`.joblib`) — kernel hyperparameters, scalers, and training data |
+| `requests` | HTTP client for the optional remote AI API surrogate |
+
+### AI / Bayesian optimization (optional)
+| Package | Purpose |
+|---------|---------|
+| `scikit-optimize` (`skopt`) | Bayesian optimizers `bayes_gp` / `bayes_rf` / `bayes_mo` (GP + EI / ParEGO) |
+
+### GUI mode (`--gui`, optional)
+| Package | Purpose |
+|---------|---------|
+| `PySide6` | Qt desktop application (windows, dialogs, widgets) |
+| `matplotlib` | Convergence / Pareto / AI-learning-curve plots (embedded in GUI and CLI plots) |
+
+### External (not on PyPI)
+| Package | Purpose |
+|---------|---------|
+| `virtuoso-bridge` | SSH tunnel to Cadence Virtuoso/Maestro. Installed from a local path, **not** from PyPI: `pip install -e "file:///C:/Users/DELL/virtuoso-bridge-lite-main"` |
+
+> **Note on the trained GP model:** the AI surrogate persists the trained model
+> as `ai_models/model_obj{i}.joblib` (the real model) plus a human-readable
+> `model_obj{i}.csv` hyperparameter summary. `joblib` is therefore a hard
+> dependency whenever `--use-ai` is enabled.
+
+## Install
+
+```powershell
+cd C:\Users\DELL\optimization_tool
+
+# Create virtual environment
+python -m venv .venv
+.venv\Scripts\activate
+
+# Install the external Virtuoso bridge (local path, not on PyPI)
+pip install -e "file:///C:/Users/DELL/virtuoso-bridge-lite-main"
+
+# Install this package + all declared dependencies (numpy, pandas, pymoo,
+# scikit-learn, scipy, joblib, requests, scikit-optimize, PySide6, matplotlib)
+pip install -e .
+
+# Optional: GUI-only extras if you only run --gui
+# pip install -e ".[gui]"
+```
+
+## Usage
+
+### Quick start (dry-run, no real simulation)
+
+```powershell
+python -m optimization_tool --generations 10 --population 20
+```
+
+### Real run (with Virtuoso simulation)
+
+```powershell
+python -m optimization_tool --real-run --generations 50 --population 50
+```
+
+### With AI surrogate assistance
+
+```powershell
+python -m optimization_tool --real-run --use-ai --generations 50 --population 50
+```
+
+The AI surrogate learns from real simulations and replaces some evaluations
+with predictions, reducing the number of costly Spectre runs.
+
+### With project archiving
+
+```powershell
+python -m optimization_tool --project-dir my_opamp_opt --generations 50
+```
+
+This creates a timestamped archive under `my_opamp_opt/runs/` with full
+configuration, per-generation history, and final results.
+
+### List available algorithms
+
+```powershell
+python -m optimization_tool --list-algos
+```
+
+### GUI mode
+
+```powershell
+python -m optimization_tool --gui
+```
+
+Launches a PySide6 desktop application with Cadence-inspired UI for configuring
+and running optimizations interactively, including AI surrogate settings and
+project management.
+
+### All CLI options
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--generations N` | 10 | Number of optimization generations |
+| `--population N` | 20 | Population size |
+| `--algo NAME` | nsga2 | Algorithm name (see `--list-algos`) |
+| `--dry-run` | true | Run without real simulation (default) |
+| `--real-run` | | Run actual Virtuoso simulation |
+| `--project-dir DIR` | none | Project directory for archiving runs |
+| `--run-directory DIR` | . | Remote Virtuoso run directory |
+| `--csv-filename FILE` | none | Use local CSV instead of downloading |
+| `--download-dir DIR` | none | Local directory for downloaded CSV |
+| `--seed N` | 1 | Random seed |
+| `--no-plot` | | Disable convergence/Pareto plots |
+| `--plot-dir DIR` | . | Directory to save plot images |
+| `--list-algos` | | List available algorithms and exit |
+| `--quiet` | | Suppress verbose output |
+| `--debug-libs` | | Also show DEBUG logs from third-party libraries (virtuoso_bridge, paramiko, urllib3, ...). Off by default so the console stays focused on optimization progress. |
+| `--gui` | | Launch PySide6 GUI application |
+
+> **Logging:** By default the root logger is set to `WARNING` and only the
+> project's own modules (`optimization_tool`, `dclaw.surrogate`) emit `DEBUG`.
+> Third-party libraries are pinned to `WARNING` to avoid flooding the console.
+> Pass `--debug-libs` to also see their `DEBUG` output (useful while debugging
+> the bridge or other dependencies). The GUI applies the same strategy.
+| `--use-ai` | | Enable AI surrogate assistance |
+| `--ai-type TYPE` | local_gp | AI backend: local_gp, random_forest, gradient_boosting |
+| `--ai-csv FILE` | none | Historical CSV data for initial AI training |
+
+## Available Algorithms
+
+| Category | Algorithms |
+|----------|-----------|
+| Single-objective | ga, de, pso, cmaes |
+| Multi-objective (2-3) | nsga2, spea2, nsga3, moead, rnsga3 |
+| Many-objective (4+) | nsga3, moead, ctaea |
+| Bayesian (single) | bayes_gp, bayes_rf |
+| Bayesian (multi) | bayes_mo |
+
+## AI Surrogate Assistance
+
+The AI surrogate module accelerates optimization by replacing costly Spectre
+simulations with fast model predictions. It supports three phases:
+
+### 1. Cold Start (`cold_start_n`)
+The first N evaluations use **real simulation** to collect initial training data.
+Set to 0 to skip (e.g., when loading historical data).
+
+### 2. AI Prediction
+When the model's uncertainty is **below threshold**, the AI predicts objective
+values directly — no simulation needed.
+
+### 3. Real Verification
+When uncertainty **exceeds threshold**, a real simulation runs and the result
+is fed back to improve the model (**online learning**).
+
+### Supported Models
+
+| Model | Type | Best For |
+|-------|------|----------|
+| `local_gp` | Gaussian Process (RBF/Matern kernel) | Smooth response surfaces, small samples |
+| `random_forest` | Random Forest regression | Robust to outliers, medium samples |
+| `gradient_boosting` | Gradient Boosting + quantile | Non-smooth responses, large samples |
+
+### Model Persistence (Save/Load)
+
+After an optimization completes, the AI model's training data is automatically
+saved to the project run directory,for example:
+
+```
+{project_dir}/nsga2/ai_models/
+├── metadata.json          # Variable names + obj. specs
+├── model_obj0.csv         # Model for objective 0 (Gain)
+└── model_obj1.csv         # Model for objective 1 (PM)
+```
+
+On the next run, the system **automatically detects** and loads this data:
+
+- **Variables matched by name** → columns are reordered automatically
+  (handles variable order changes)
+- **Same variable set required** → different circuit topology is rejected
+  with a warning
+- **Cold start skipped** → `cold_start_n` is set to 0 automatically
+- **Incremental learning** → new data is appended to existing history
+
+Use the **"启用历史模型继承"** checkbox in the GUI to enable/disable, or
+the **"清零历史模型"** button to delete saved data.
+
+> **Note:** Historical models are only valid when the circuit topology and
+> objectives are the same. Variable order changes are handled automatically,
+> but different variable sets will be rejected.
+
+## Project Structure (with `--project-dir`)
+
+```
+my_project/
+├── project.json              # Project metadata (auto-generated)
+├── runs/
+│   ├── 20260817_143001/      # Each run = timestamped directory
+│   │   ├── config.json       # Full configuration snapshot
+│   │   ├── variables.csv     # Variable names + bounds
+│   │   ├── specs.csv         # Objective expressions + weights
+│   │   ├── history.jsonl     # Per-generation log (JSONL)
+│   │   ├── results.json      # Final Pareto set
+│   │   ├── convergence.png   # Convergence plot
+│   │   ├── pareto.png        # Pareto front plot
+│   │   └── ai_models/        # ← NEW: AI training data (save/load)
+│   │       ├── metadata.json
+│   │       ├── model_obj0.csv
+│   │       └── model_obj1.csv
+│   └── ...
+├── ai_models/                # ← Project-level AI data (legacy runs)
+├── project_all_results.csv   # Consolidated results across runs
+├── project_all_history.csv   # Consolidated history across runs
+└── context/                  # Human notes (optional)
+```
+
+## References
+
+- [pymoo documentation](https://pymoo.org/)
+- [virtuoso-bridge-lite](https://github.com/your-org/virtuoso-bridge-lite)
+- [scikit-learn Gaussian Process](https://scikit-learn.org/stable/modules/gaussian_process.html)
+
+[def]: image/Readme.png

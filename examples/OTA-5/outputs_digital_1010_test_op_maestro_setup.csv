@@ -1,0 +1,5 @@
+Test,Name,Type,Output,Plot,Save,Weight,Spec
+digital_1010:test_op:1,,expr,dB20(VF("/net17")),t,,,
+digital_1010:test_op:1,,expr,phase(VF("/net17")),t,,,
+digital_1010:test_op:1,Gain,expr,value(dB20(VF("/net17")) 1),t,,0.5,> 85
+digital_1010:test_op:1,PM,expr,phaseMargin(VF("/net17")),t,,0.5,> 60

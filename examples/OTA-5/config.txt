@@ -1,0 +1,13 @@
+algorithm=nsga2
+generations=3
+population=10
+seed=0
+dry_run=False
+plot_enabled=True
+verbose=False
+parallel_eval=1
+use_ai=True
+ai_type=random_forest
+ai_cold_start=10
+ai_threshold=0.9
+load_historical=True

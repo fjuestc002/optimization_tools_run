@@ -1,0 +1,22 @@
+,Parameter,,,,,,tt25
+,example_models.lib,,,,,,mom_tt
+,example_models.lib,,,,,,var_tt
+,example_models.lib,,,,,,setup
+,example_models.lib,,,,,,soa_on
+,example_models.lib,,,,,,res_tt
+,example_models.lib,,,,,,mim_tt
+,example_models.lib,,,,,,ggmos_tt
+,example_models.lib,,,,,,esdpnp_tt
+,example_models.lib,,,,,,dio_tt
+,example_models.lib,,,,,,bjt_tt
+,example_models.lib,,,,,,hv_tt
+,example_models.lib,,,,,,tt
+,temperature,,,,,,25
+
+
+Test,Output,Spec,Weight,Pass/Fail,Min,Max,tt25
+digital_1010:test_op:1,"dB20(VF(""/net17""))",,,,,,
+digital_1010:test_op:1,"phase(VF(""/net17""))",,,,,,
+digital_1010:test_op:1,Gain,> 85,0.5,fail,34.66,34.66,34.66
+digital_1010:test_op:1,PM,> 60,0.5,pass,99.4,99.4,99.4
+
