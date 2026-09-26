@@ -1,7 +1,7 @@
 # optimization_tools — Run Release
 
 This repository contains **prebuilt Windows executables** of the analog IC
-parameter optimization tool (v0.1.1, hardened build), packaged with
+parameter optimization tool (v0.1.2, hardened build), packaged with
 PyInstaller. It is a *binary-only* release: no Python sources are included,
 and all first-party modules are **compiled to native extensions (Cython
 `.pyd`)** — readable Python code exists nowhere in the bundles. Download and
@@ -154,6 +154,11 @@ optimization_tools_run/
 
 ## Notes
 
+- **v0.1.2 (2026-09-27)**: fixes the results-table "back-annotate to circuit"
+  button in the compiled build — a Cython-compiled lambda could not be probed
+  for its arity by Qt, so `clicked` emitted 0 arguments and the handler died
+  silently inside the event loop (the button appeared dead). Empty/unmatched
+  rows now emit a loud log warning instead of doing nothing.
 - This is a *compiled* distribution: the tool's own Python modules were
   transpiled with Cython into native `.pyd` extensions before freezing, so no
   `.py` or `.pyc` of the application logic ships in the bundle. The only

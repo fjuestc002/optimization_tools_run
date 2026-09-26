@@ -1,3 +1,47 @@
+22:24:38 [optimization_tool.ai.local_gp] INFO: [GP] 初始化: kernel=rbf_ard, noise_level=0.1
+22:24:38 [optimization_tool.ai.gradient_boosting] INFO: [GBRT] 初始化: max_iter=300, max_depth=None, max_leaf_nodes=31, lr=0.1
+22:24:38 [optimization_tool.ai.gradient_boosting] INFO: [GBRT] 初始化历史数据: 8 样本, 2 变量
+joblib\externals\loky\backend\context.py:131: UserWarning: Could not find the number of physical cores for the following reason:
+[WinError 2] 系统找不到指定的文件。
+Returning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use.
+  warnings.warn(
+  File "joblib\externals\loky\backend\context.py", line 247, in _count_physical_cores
+    cpu_count_physical = _count_physical_cores_win32()
+  File "joblib\externals\loky\backend\context.py", line 299, in _count_physical_cores_win32
+    cpu_info = subprocess.run(
+        "wmic CPU Get NumberOfCores /Format:csv".split(),
+        capture_output=True,
+        text=True,
+    )
+  File "subprocess.py", line 555, in run
+  File "subprocess.py", line 1039, in __init__
+  File "subprocess.py", line 1553, in _execute_child
+22:24:38 [optimization_tool.ai.gradient_boosting] DEBUG: [GBRT] 分位数 median(alpha=0.5) 训练完成
+22:24:38 [optimization_tool.ai.gradient_boosting] INFO: [GBRT] 初步训练: samples=8, n_var=2
+22:24:38 [optimization_tool.ai.gradient_boosting] DEBUG: [GBRT] 预测: 2 点, mean=[1.5070], std=[1.6741] (MAD法)
+22:24:38 [optimization_tool.ai.local_gp] INFO: [GP] 初始化: kernel=rbf_ard, noise_level=0.1
+22:24:38 [optimization_tool.ai.local_gp] INFO: [GP] 初始化历史数据: 8 样本, 2 变量
+sklearn\gaussian_process\_gpr.py:667: ConvergenceWarning: lbfgs failed to converge after 16 iteration(s) (status=2):
+ABNORMAL: 
+
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  _check_optimize_result("lbfgs", opt_res)
+sklearn\gaussian_process\kernels.py:445: ConvergenceWarning: The optimal value found for dimension 0 of parameter k2__noise_level is close to the specified lower bound 1e-05. Decreasing the bound and calling fit again may find a better value.
+  warnings.warn(
+22:24:39 [optimization_tool.ai.local_gp] INFO: [GP] 训练完成: samples=8, n_var=2, y_scale=1.3769, 核=97.1**2 * RBF(length_scale=[12.9, 227]) + WhiteKernel(noise_
+22:24:39 [optimization_tool.ai.local_gp] DEBUG: [GP DEBUG] y_hist[:5]=[-1.3384731916376724, 2.3152128369331333, -0.8552775626061432, 2.6312850283344313, 1.54026411661019], y_hist_mean=0.8459, y_hist_std=1.3769
+22:24:39 [optimization_tool.ai.local_gp] DEBUG: [GP DEBUG] y_scaler: mean_=0.8459, scale_=1.3769, mean_norm=[-1.5864], mean_norm/scale=-1.1522
+22:24:39 [optimization_tool.ai.local_gp] DEBUG: [GP] 预测: 2 点, mean=[-1.3384], std=[0.0060]
+22:24:39 [optimization_tool.ai.forest] INFO: [Forest] 初始化: n_estimators=100, max_depth=None, min_samples_leaf=2
+22:24:39 [optimization_tool.ai.forest] INFO: [Forest] 初始化历史数据: 8 样本, 2 变量
+22:24:39 [optimization_tool.ai.forest] INFO: [Forest] 训练完成: samples=8, n_var=2, R\xb2(OOB)=-0.2847
+22:24:39 [optimization_tool.ai.forest] DEBUG: [Forest] 预测: 2 点, mean=[-0.0789], std=[0.8852]
+22:24:39 [optimization_tool.ai.remote_api] INFO: [RemoteAI] DClaw API 客户端初始化 (url=, timeout=30s)
+22:24:39 [optimization_tool.ai.remote_api] WARNING: [RemoteAI] 未配置远程 API URL，将始终使用本地降级模式。
+WARNING: pop_size=10 is less than the number of reference directions ref_dirs=13.
+This might cause unwanted behavior of the algorithm. 
+Please make sure pop_size is equal or larger than the number of reference directions. 
 PASS metadata:pymoo: v0.6.2
 PASS metadata:moocore: v0.3.2
 PASS metadata:numpy: v2.5.2
@@ -5,7 +49,7 @@ PASS metadata:scipy: v1.18.0
 PASS metadata:matplotlib: v3.11.1
 PASS metadata:pandas: v3.0.5
 PASS metadata:virtuoso_bridge: v0.7.0
-PASS metadata:optimization_tool: v0.1.1
+PASS metadata:optimization_tool: v0.1.2
 PASS metadata:scikit-learn: v1.9.0
 PASS metadata:narwhals: v2.25.0
 PASS metadata:PySide6: v6.11.2
@@ -17,11 +61,11 @@ PASS import sklearn: 1.9.0
 PASS pymoo.algorithms(construct): 9 algorithms: ga,de,pso,cmaes,nsga2,spea2,nsga3,moead,ctaea
 PASS pymoo.nds: fronts=2
 PASS ai.evaluator.constants: cold_start=20,threshold=0.9
-PASS engine.loop: <module 'optimization_tool.engine.loop' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\engine\\loop.cp314-win_amd64.pyd'>
-PASS optimization(VirtuosoProblem): <module 'optimization_tool.optimization' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\optimization.cp314-win_amd64.pyd'>
-PASS virtuoso_bridge.client: <module 'virtuoso_bridge' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\virtuoso_bridge\\__init__.cp314-win_amd64.pyd'>
-PASS gui.app: <module 'optimization_tool.gui.app' from 'C:\\Users\\DELL\\run_build\\dist_run\\optimization_tool_gui\\_internal\\optimization_tool\\gui\\app.cp314-win_amd64.pyd'>
+PASS engine.loop: <module 'optimization_tool.engine.loop' from 'C:\\Users\\DELL\\run_build\\dist\\optimization_tool_gui\\_internal\\optimization_tool\\engine\\loop.cp314-win_amd64.pyd'>
+PASS optimization(VirtuosoProblem): <module 'optimization_tool.optimization' from 'C:\\Users\\DELL\\run_build\\dist\\optimization_tool_gui\\_internal\\optimization_tool\\optimization.cp314-win_amd64.pyd'>
+PASS virtuoso_bridge.client: <module 'virtuoso_bridge' from 'C:\\Users\\DELL\\run_build\\dist\\optimization_tool_gui\\_internal\\virtuoso_bridge\\__init__.cp314-win_amd64.pyd'>
+PASS gui.app: <module 'optimization_tool.gui.app' from 'C:\\Users\\DELL\\run_build\\dist\\optimization_tool_gui\\_internal\\optimization_tool\\gui\\app.cp314-win_amd64.pyd'>
 PASS matplotlib.agg: Agg ok
 PASS ai.surrogates(construct+fit+predict): gradient_boosting,local_gp,random_forest,remote_api(ctor)
-PASS gui.icon: C:\Users\DELL\run_build\dist_run\optimization_tool_gui\_internal\icon.ico (96076 B) [QIcon ok]
+PASS gui.icon: C:\Users\DELL\run_build\dist\optimization_tool_gui\_internal\icon.ico (96076 B) [QIcon ok]
 ALL PASS (frozen=True)
