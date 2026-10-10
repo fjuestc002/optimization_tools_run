@@ -7,19 +7,9 @@
 # To disable filtering: pass param_filters=None (returns all params)
 
 filters:
-  # --- TSMC 28nm PDK transistors ---
-  - match: {lib: "tsmcN28", cell: "nch_*"}
-    params: [model, w, l, fingers, m, multi, simM]
-  - match: {lib: "tsmcN28", cell: "pch_*"}
-    params: [model, w, l, fingers, m, multi, simM]
+  # (example foundry filter blocks sanitized for redistribution)
 
-  # --- TSMC 28nm PDK passive devices ---
-  - match: {lib: "tsmcN28", cell: "cfmom_*"}
-    params: [model, c, w, l, m, nr, lr, stm, spm]
-  - match: {lib: "tsmcN28", cell: "rnodwo_*"}
-    params: [model, r, w, l, m]
-  - match: {lib: "tsmcN28", cell: "rpodwo_*"}
-    params: [model, r, w, l, m]
+  # (example foundry filter blocks sanitized for redistribution)
 
   # --- analogLib passive devices ---
   - match: {lib: "analogLib", cell: "cap"}

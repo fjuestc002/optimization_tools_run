@@ -191,3 +191,18 @@ and copyright texts ship inside the bundles (see
 
 The software is provided "as is", without warranty of any kind, express or
 implied.
+
+## Redistribution redline (maintainer checklist, 2026-10-11)
+
+Publishing policy for this repo: no PDK vendor names or foundry identifiers
+anywhere on the redistribution surface. Two known upstream-shipped surfaces
+and their handling:
+
+1. `virtuoso_bridge/.../cdf_param_filters.yaml` ships example filter blocks
+   naming a foundry PDK. They carry **zero data** (match keys only) but are
+   vendor identifiers, so every bundled copy is sanitized at packaging time
+   (example blocks removed). A fresh `pip install virtuoso-bridge` reintroduces
+   them — re-run the sanitizer before every commit of rebuilt bundles.
+2. `virtuoso_bridge` compiled `editor.pyd` embeds the same foundry library name
+   inside upstream doctest strings. Removing it requires rebuilding the
+   third-party package; left as-is (public upstream artifact, no device data).
