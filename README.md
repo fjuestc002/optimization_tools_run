@@ -1,7 +1,7 @@
 # optimization_tools — Run Release
 
 This repository contains **prebuilt Windows executables** of the analog IC
-parameter optimization tool (v0.1.2, hardened build), packaged with
+parameter optimization tool (v0.1.3, hardened build), packaged with
 PyInstaller. It is a *binary-only* release: no Python sources are included,
 and all first-party modules are **compiled to native extensions (Cython
 `.pyd`)** — readable Python code exists nowhere in the bundles. Download and
@@ -79,6 +79,27 @@ predictions, in three phases:
 | `local_gp` | Gaussian Process (RBF/Matérn) | smooth response surfaces, small samples |
 | `random_forest` | Random Forest regression | robustness to outliers, medium samples |
 | `gradient_boosting` | Gradient Boosting + quantile | non-smooth responses, larger samples |
+| `gsieve` | MIDAS — physics-informed surrogate (device tables + MNA) | ms-scale offline evaluation, no simulator |
+
+`gsieve` differs from the learned models above: instead of learning the
+circuit response from past simulations, it evaluates the *netlist itself*
+against precomputed **device data tables** (currents, trans-conductance,
+capacitances vs. L/W/bias per transistor). When matching tables exist, the
+whole optimization runs offline at millisecond-per-evaluation speed — no
+Cadence session required — and an optional end-of-generation re-verification
+against real simulation can be switched on (`sieve_verify=1`) when one is
+connected. A fully worked offline example ships in `examples/GS-OTA-sg13g2/`
+(open PDK tables included; see its README).
+
+**About the data tables:** MIDAS only — it evaluates against per-PDK device
+tables, and *foundry tables cannot be redistributed here* (PDK license /
+copyright restrictions — this repository ships none for closed PDKs). Two
+ways to obtain them: build them yourself for your PDK with the companion
+**collector** toolchain (sweep → pack → `_pdk/<name>/`, fully offline and
+deterministic), or contact the author. The bundled demo tables are the only
+exception: they derive from the Apache-2.0 open SG13G2 PDK and are legally
+redistributable. Without tables the feature degrades loudly — the start gate
+names the missing devices, nothing crashes silently.
 
 Trained data persists per project (`ai_models/` in the project folder) and is
 **auto-detected on the next run**: variables matched by name (order changes
@@ -104,6 +125,8 @@ optimization_tools_run/
 ├── start_bridge_launcher/          ← one-click Cadence bridge connector
 │   └── start_bridge_launcher.exe   ← run this to open the SSH tunnel + bridge
 ├── examples/OTA-5/                 ← sample project (generic 5-T OTA, dry-run data)
+├── examples/GS-OTA-sg13g2/         ← MIDAS offline surrogate demo (open PDK, no Cadence)
+├── examples/_pdk/sg13g2/           ← device data tables for the demo
 ├── docs/MANUAL.pdf                 ← English user manual (workflow guide)
 ├── image/Readme.png                ← demo screenshot (redacted)
 └── README.md
@@ -140,6 +163,11 @@ optimization_tools_run/
    AI surrogate cold-start → predict → verify cycle, convergence plots and the
    Pareto front all execute on synthetic responses, so you can evaluate the
    whole workflow before wiring a simulator.
+4. For a *real physics* evaluation without Cadence: follow
+   `examples/GS-OTA-sg13g2/README.md` — copy the project and its device
+   tables into place, open the project and run. The MIDAS surrogate
+   evaluates the netlist against the bundled tables (ms per evaluation);
+   expect best gain ≈ 50 dB in a few seconds, fully offline.
 
 ## Cadence connection (real runs)
 
@@ -154,6 +182,13 @@ optimization_tools_run/
 
 ## Notes
 
+- **v0.1.3 (2026-10-11)**: ships the MIDAS physics-informed surrogate track
+  (netlist → device-table + MNA evaluation, offline-capable) with a worked
+  open-PDK demo (`examples/GS-OTA-sg13g2/` + bundled tables); config.txt
+  saves now preserve user-added keys in place (comments kept); generic
+  remote-API surrogate (`ai_remote_url`); convergence-based early stop
+  (`stop_patience`); netlist version auto-check with remote refresh;
+  additional Qt slot arity hardening for the compiled build.
 - **v0.1.2 (2026-09-27)**: fixes the results-table "back-annotate to circuit"
   button in the compiled build — a Cython-compiled lambda could not be probed
   for its arity by Qt, so `clicked` emitted 0 arguments and the handler died
@@ -206,3 +241,9 @@ and their handling:
 2. `virtuoso_bridge` compiled `editor.pyd` embeds the same foundry library name
    inside upstream doctest strings. Removing it requires rebuilding the
    third-party package; left as-is (public upstream artifact, no device data).
+3. `examples/GS-OTA-sg13g2/` + `examples/_pdk/sg13g2/`: MIDAS demo project
+   and device tables derived from the **IHP SG13G2 open PDK** (Apache-2.0,
+   public). Open-source PDK material is explicitly allowed on the
+   redistribution surface; foundry (closed PDK) tables and any user data
+   must never enter `examples/` or the bundles. The staged-src zero-data
+   gate (npz/bank scan in `stage_prep.py`) enforces the latter.

@@ -1,0 +1,35 @@
+* !GSIEVE-PORTS v2
+* !CIRCUIT gsop
+* !PIN vin_p    IN1
+* !PIN vin_n    IN2
+* !PIN vout_p   out
+* !PIN vdd      vdd        value=1.2
+* !PIN vss      GND
+* !PIN vb       bias       value=0.65
+* !SHA1 68d5179175a2fd396c6f4df7fc7fd8b3efff3049
+* !GSIEVE-PORTS-END
+// v0.1.3 demo cell: op2s (SG13G2 1.2V) — gsieve demo circuit, 1:1 op2s topology
+// 输入对 M0/M1 + 交叉镜像 M3~M6 + 二极管/共源负载 M7/M8 + 输出 CS M9
+// + 双管偏置 M2/M10 + 调零网络 C0/R0。RL/CL=固定 testbench。
+subckt gsop GND IN1 IN2 bias out vdd
+    M0 (net17 IN1 net32 net32) nsg w=(Wnm0) l=(Lnm0) m=(1) nf=1
+    M1 (net24 IN2 net32 net32) nsg w=(Wnm0) l=(Lnm0) m=(1) nf=1
+    M2 (net32 bias GND GND) nsg w=((Wnm2) * (nm2)) l=(Lnm2) m=(1) nf=1
+    M10 (out bias GND GND) nsg w=((Wnm2) * (nm10)) l=(Lnm2) m=(1) nf=1
+    M3 (net17 net17 vdd vdd) psg w=(Wpm3) l=(lpm3) m=(1) nf=1
+    M4 (net24 net24 vdd vdd) psg w=(Wpm3) l=(lpm3) m=(1) nf=1
+    M5 (net26 net24 vdd vdd) psg w=((Wpm3) * (np6)) l=(lpm3) m=(1) nf=1
+    M6 (net14 net17 vdd vdd) psg w=((Wpm3) * (np6)) l=(lpm3) m=(1) nf=1
+    M7 (net14 net14 GND GND) nsg w=(Wnm7) l=(Lnm7) m=(1) nf=1
+    M8 (net26 net14 GND GND) nsg w=(Wnm7) l=(Lnm7) m=(1) nf=1
+    M9 (out net26 vdd vdd) psg w=(Wpm9) l=(Lpm9) m=(1) nf=1
+    C0 (net26 n030) capacitor c=(cap)
+    R0 (n030 out) resistor r=10K
+ends gsop
+I0 (0 IN1 IN2 bias out vdd) gsop
+V0 (vdd 0) vsource dc=1.2 type=dc
+V1 (bias 0) vsource dc=0.65 type=dc
+V2 (IN1 0) vsource dc=0.6 mag=1 phase=0 type=sine
+V3 (IN2 0) vsource dc=0.6 mag=1 phase=180 type=sine
+RL (out 0) resistor r=200K
+CL (out 0) capacitor c=1.5P

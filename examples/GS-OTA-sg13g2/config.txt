@@ -1,0 +1,17 @@
+algorithm=nsga2
+generations=16
+population=24
+seed=20261011
+dry_run=False
+plot_enabled=True
+verbose=False
+parallel_eval=1
+use_ai=True
+ai_type=gsieve
+ai_cold_start=20
+ai_threshold=0.9
+load_historical=False
+gsieve_home=
+sieve_netlist=
+midas_pdk=auto
+sieve_verify=0
